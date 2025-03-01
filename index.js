@@ -30,7 +30,7 @@ io.on('connection',socket=>{
         .to(user.room)
         .emit(
             'message',
-            formatMessage("Webcage",'${user.username} has joined the room')
+            formatMessage("Webcage",`${user.username} has joined the room`)
         );
 
         //current active users and room name
@@ -40,15 +40,13 @@ io.on('connection',socket=>{
         });
     });
     //listen for client message
-
-    socket.on('chat message', msg =>{
+    socket.on('chatMessage', (msg) => { // Changed from 'chat message'
         const user = getActiveUser(socket.id);
-
-        io.to(user.room).emit('message',
-            formatMessage(user.username,msg)
-        );
+        if (user) {
+            io.to(user.room).emit('message', formatMessage(user.username, msg));
+        }
     });
-
+    
     //runs when client disconnects
     socket.on('disconnect', () => {
         const user = exitRoom(socket.id);
